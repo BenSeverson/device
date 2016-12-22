@@ -17,7 +17,7 @@
 #ifndef __KEYS_H__
 #define __KEYS_H__
 
-#include "GSwifi_const.h"
+//#include "GSwifi_const.h"
 #include <inttypes.h>
 
 // SSID is max 32 bytes

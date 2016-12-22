@@ -15,31 +15,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Arduino.h"
-#include <avr/wdt.h>
+//#include <avr/wdt.h>
 #include "pins.h"
 #include "const.h"
 #include "MemoryFree.h"
-#include "pgmStrToRAM.h"
+//#include "pgmStrToRAM.h"
 #include "IrCtrl.h"
 #include "IrPacker.h"
-#include "FullColorLed.h"
-#include "GSwifi.h"
-#include "Keys.h"
+//#include "FullColorLed.h"
+//#include "GSwifi.h"
+//#include "Keys.h"
 #include "timer.h"
-#include "longpressbutton.h"
+//#include "longpressbutton.h"
 #include "IRKitHTTPHandler.h"
 #include "commands.h"
 #include "version.h"
 #include "log.h"
+#include "ringbuffer.h"
 
-static struct long_press_button_state_t long_press_button_state;
+//static struct long_press_button_state_t long_press_button_state;
 static volatile uint8_t reconnect_timer = TIMER_OFF;
 static char commands_data[COMMAND_QUEUE_SIZE];
-static FullColorLed color( FULLCOLOR_LED_R, FULLCOLOR_LED_G, FULLCOLOR_LED_B );
+//static FullColorLed color( FULLCOLOR_LED_R, FULLCOLOR_LED_G, FULLCOLOR_LED_B );
 
 struct RingBuffer commands;
-GSwifi gs(&Serial1X);
-Keys keys;
+//GSwifi gs(&Serial1X);
+//Keys keys;
 volatile char sharedbuffer[ SHARED_BUFFER_SIZE ];
 
 void setup() {
@@ -56,32 +57,32 @@ void setup() {
 
     //--- initialize full color led
 
-    pinMode(FULLCOLOR_LED_R, OUTPUT);
-    pinMode(FULLCOLOR_LED_G, OUTPUT);
-    pinMode(FULLCOLOR_LED_B, OUTPUT);
-    color.setLedColor( 1, 0, 0, false ); // red: error
+    //pinMode(FULLCOLOR_LED_R, OUTPUT);
+    //pinMode(FULLCOLOR_LED_G, OUTPUT);
+    //pinMode(FULLCOLOR_LED_B, OUTPUT);
+    //color.setLedColor( 1, 0, 0, false ); // red: error
 
     //--- initialize long press button
 
-    pinMode( CLEAR_BUTTON, INPUT );
-    long_press_button_state.pin            = CLEAR_BUTTON;
-    long_press_button_state.callback       = &long_pressed;
-    long_press_button_state.threshold_time = 5;
+    //pinMode( CLEAR_BUTTON, INPUT );
+    //long_press_button_state.pin            = CLEAR_BUTTON;
+    //long_press_button_state.callback       = &long_pressed;
+    //long_press_button_state.threshold_time = 5;
 
     //--- initialize IR
 
     pinMode(IR_OUT,           OUTPUT);
 
     // pull-up
-    pinMode(IR_IN,            INPUT);
-    digitalWrite(IR_IN,       HIGH);
+    //pinMode(IR_IN,            INPUT);
+    //digitalWrite(IR_IN,       HIGH);
 
     IR_initialize( &on_ir_receive );
 
     //--- initialize Wifi
 
-    pinMode(LDO33_ENABLE,     OUTPUT);
-    wifi_hardware_reset();
+    //pinMode(LDO33_ENABLE,     OUTPUT);
+    //wifi_hardware_reset();
 
     // add your own code here!!
 }
@@ -96,7 +97,7 @@ void loop() {
 
     process_commands();
 
-    gs.loop();
+    //gs.loop();
 
     IR_loop();
 
@@ -146,7 +147,7 @@ void loop() {
     // add your own code here!!
 }
 
-void wifi_hardware_reset () {
+/*void wifi_hardware_reset () {
     MAINLOG_PRINTLN("!E25");
 
     // UART line powers GS and pulls 3.3V line up to around 1.4V so GS won't reset without this
@@ -160,15 +161,15 @@ void wifi_hardware_reset () {
     delay( 1000 );
 
     ring_put( &commands, COMMAND_SETUP );
-}
+}*/
 
-void long_pressed() {
-    color.setLedColor( 1, 0, 0, false ); // red: error
+/*void long_pressed() {
+    //color.setLedColor( 1, 0, 0, false ); // red: error
 
     keys.clear();
     keys.save();
     software_reset();
-}
+}*/
 
 void process_commands() {
     while (! ring_isempty(&commands)) {
@@ -181,15 +182,15 @@ void process_commands() {
             break;
         case COMMAND_SETUP:
             irkit_http_init();
-            gs.setup( &on_disconnect, &on_reset );
+            //gs.setup( &on_disconnect, &on_reset );
 
             // vv continues
         case COMMAND_CONNECT:
-            connect();
+            //connect();
             break;
         case COMMAND_CLOSE:
             ring_get( &commands, &command, 1 );
-            gs.close(command);
+            //gs.close(command);
             break;
         case COMMAND_START_POLLING:
             irkit_httpclient_start_polling( 0 );
@@ -201,7 +202,7 @@ void process_commands() {
             {
                 char regdomain;
                 ring_get( &commands, &regdomain, 1 );
-                gs.setRegDomain( regdomain );
+                //gs.setRegDomain( regdomain );
             }
             break;
         default:
@@ -210,10 +211,10 @@ void process_commands() {
     }
 }
 
-void on_irkit_ready() {
-    color.setLedColor( 0, 0, 1, false ); // blue: ready
-}
-
+//void on_irkit_ready() {
+//    color.setLedColor( 0, 0, 1, false ); // blue: ready
+//}
+/*
 void on_ir_receive() {
     MAINLOG_PRINTLN("i<");
 #ifdef IRLOG
@@ -230,25 +231,25 @@ void on_ir_receive() {
         }
     }
 }
-
+*/
 void on_ir_xmit() {
     MAINLOG_PRINTLN("i>");
-    color.setLedColor( 0, 0, 1, true, 1 ); // xmit: blue blink for 1sec
+    //color.setLedColor( 0, 0, 1, true, 1 ); // xmit: blue blink for 1sec
 }
 
 // inside ISR, be careful
 void on_timer() {
-    color.onTimer(); // 200msec blink
+    //color.onTimer(); // 200msec blink
 
     irkit_http_on_timer();
 
     TIMER_TICK( reconnect_timer );
 
-    gs.onTimer();
+    //gs.onTimer();
 
     IR_timer();
 
-    long_press_button_ontimer( &long_press_button_state );
+    //long_press_button_ontimer( &long_press_button_state );
 }
 
 int8_t on_reset() {
@@ -269,17 +270,17 @@ void connect() {
     IR_state( IR_DISABLED );
 
     // load wifi credentials from EEPROM
-    keys.load();
+    //keys.load();
 
-    if (keys.isWifiCredentialsSet()) {
+    /*if (keys.isWifiCredentialsSet()) {
         color.setLedColor( 0, 1, 0, true ); // green blink: connecting
 
         gs.join(keys.getSecurity(),
                 keys.getSSID(),
                 keys.getPassword());
-    }
+    }*/
 
-    if (gs.isJoined()) {
+    /*if (gs.isJoined()) {
         color.setLedColor( 0, 1, 1, true ); // cyan blink: setting up
 
         keys.setWifiWasValid(true);
@@ -287,9 +288,9 @@ void connect() {
 
         // start http server
         gs.listen();
-    }
+    }*/
 
-    if (gs.isListening()) {
+    /*if (gs.isListening()) {
         // start mDNS
         gs.setupMDNS();
 
@@ -318,10 +319,10 @@ void connect() {
                 gs.listen();
             }
         }
-    }
+    }*/
 }
 
 void software_reset() {
-    wdt_enable(WDTO_15MS);
+    //wdt_enable(WDTO_15MS);
     while (1) ;
 }

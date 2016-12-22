@@ -18,7 +18,7 @@
 #include "env.h"
 
 #ifdef ARDUINO
-# include <avr/eeprom.h>
+//# include <avr/eeprom.h>
 #else
 # include <stdio.h>
 # include <stdlib.h>

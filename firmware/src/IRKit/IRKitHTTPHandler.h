@@ -17,7 +17,7 @@
 #ifndef __IRKITHTTPHANDLER_H__
 #define __IRKITHTTPHANDLER_H__
 
-#include "GSwifi.h"
+//#include "GSwifi.h"
 
 // we will start requesting GET /m again after
 // recently_posted_timer timeouts, and handler.timer timeouts: 5-10sec

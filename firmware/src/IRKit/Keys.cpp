@@ -16,8 +16,8 @@
 */
 #include "Keys.h"
 #include "Arduino.h"
-#include <avr/eeprom.h>
-#include "pgmStrToRAM.h"
+//#include <avr/eeprom.h>
+//#include "pgmStrToRAM.h"
 #include "CRC8.h"
 #include "convert.h" // x2i
 #include "log.h"

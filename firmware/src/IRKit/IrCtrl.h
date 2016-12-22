@@ -11,8 +11,8 @@
 #include <stdint.h>
 
 /* Put hardware dependent include files here */
-#include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <avr/io.h>
+//#include <avr/interrupt.h>
 #include "IrPacker.h"
 #include "const.h"
 

@@ -20,7 +20,7 @@
 
 #include <Arduino.h>
 #include "IrCtrl.h"
-#include "pgmStrToRAM.h"
+//#include "pgmStrToRAM.h"
 #include "timer.h"
 #include "IrPacker.h"
 #include "env.h"
